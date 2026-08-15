@@ -96,9 +96,9 @@ class FallDetectionManager(private val context: Context) : SensorEventListener {
     }
 
     private fun sendTelegramAlert() {
-        // <YOUR_BOT_TOKEN> and <YOUR_CHAT_ID> placeholders for user to fill later
-        val botToken = "<YOUR_BOT_TOKEN>"
-        val chatId = "<YOUR_CHAT_ID>"
+        // Real credentials for user
+        val botToken = "8654874065:AAGFOscZtCQUOokXO7QsvFbuBbWeb8ltdU4"
+        val chatId = "7010211918"
         val message = "Emergency! The Smart Blind Stick user may have fallen. Please check on them."
 
         if (botToken == "<YOUR_BOT_TOKEN>") {

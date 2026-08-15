@@ -93,11 +93,11 @@ class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener {
         ocrProcessor = OcrProcessor(this)
         
         compassManager = CompassManager(this)
-        spatialAudioManager = SpatialAudioManager { msg, pan, vol, pitch -> speak(msg, pan, vol, pitch) }
-        visualMemoryManager = VisualMemoryManager(this) { msg, pan, vol, pitch -> speak(msg, pan, vol, pitch) }
+        spatialAudioManager = SpatialAudioManager { msg, pan, vol, pitch -> speak(msg, pan, vol, pitch, false) }
+        visualMemoryManager = VisualMemoryManager(this) { msg, pan, vol, pitch -> speak(msg, pan, vol, pitch, true) }
         visualMemoryManager.compassManager = compassManager
-        microNavigationManager = MicroNavigationManager(this) { msg -> speak(msg) }
-        autoFlashlightManager = AutoFlashlightManager(this) { msg -> speak(msg) }
+        microNavigationManager = MicroNavigationManager(this) { msg -> speak(msg, isHighPriority = false) }
+        autoFlashlightManager = AutoFlashlightManager(this) { msg -> speak(msg, isHighPriority = false) }
         
         visionProcessor.spatialAudioManager = spatialAudioManager
         visionProcessor.visualMemoryManager = visualMemoryManager
@@ -134,17 +134,17 @@ class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener {
                             if (isOcrRequested) {
                                 ocrProcessor.processImageProxy(imageProxy) { detectedText ->
                                     isOcrRequested = false
-                                    speak("I read: $detectedText")
+                                    speak("I read: $detectedText", isHighPriority = true)
                                 }
                                 if (System.currentTimeMillis() - ocrRequestTime > 5000 && isOcrRequested) {
                                     isOcrRequested = false
-                                    speak("I couldn't find any clear text.")
+                                    speak("I couldn't find any clear text.", isHighPriority = true)
                                 }
                             } else if (isNvidiaRequested) {
                                 isNvidiaRequested = false
                                 val currentPrompt = nvidiaPrompt
                                 visionProcessor.processForNvidia(imageProxy, currentPrompt) { answer ->
-                                    speak(answer)
+                                    speak(answer, isHighPriority = true)
                                 }
                             } else {
                                 visionProcessor.processImageProxy(imageProxy)
@@ -180,56 +180,59 @@ class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener {
             command.contains("read") -> {
                 isOcrRequested = true
                 ocrRequestTime = System.currentTimeMillis()
-                speak("Let me read that for you.")
+                speak("Let me read that for you.", isHighPriority = true)
             }
             command.contains("stop") -> {
                 tts.stop()
-                speak("Stopped.")
+                speak("Stopped.", isHighPriority = true)
             }
-            command.contains("turn on flashlight") || command.contains("torch on") -> {
+            command.contains("turn on flashlight") || command.contains("turn flashlight on") || command.contains("torch on") -> {
                 autoFlashlightManager.toggleTorch(true)
             }
-            command.contains("turn off flashlight") || command.contains("torch off") -> {
+            command.contains("turn off flashlight") || command.contains("turn flashlight off") || command.contains("torch off") -> {
                 autoFlashlightManager.toggleTorch(false)
+            }
+            command.contains("auto flashlight") || command.contains("automatic flashlight") -> {
+                autoFlashlightManager.resetToAuto()
             }
             command.contains("ask nvidia") || command.contains("nvidia") || command.contains("describe") -> {
                 val prompt = command.replace("ask nvidia", "").replace("nvidia", "").trim()
                 nvidiaPrompt = if (prompt.isEmpty()) "Describe what you see in front of me." else prompt
                 isNvidiaRequested = true
-                speak("Asking Nvidia...")
+                speak("Asking Nvidia...", isHighPriority = true)
             }
             command.contains("go to") || command.contains("navigate to") -> {
                 val destination = command.replace("go to", "").replace("navigate to", "").trim()
                 if (destination.isNotEmpty()) {
-                    speak("Starting navigation to $destination")
+                    speak("Starting navigation to $destination", isHighPriority = true)
                     navigationManager.startNavigation(destination)
                 } else {
-                    speak("Please specify a destination.")
+                    speak("Please specify a destination.", isHighPriority = true)
                 }
             }
             command.contains("switch to spatial") || command.contains("spacial") || command.contains("special") -> {
                 spatialAudioManager.setEnabled(true)
-                speak("Spatial audio enabled")
+                speak("Spatial audio enabled", isHighPriority = true)
             }
             command.contains("switch to voice") || command.contains("voice") -> {
                 spatialAudioManager.setEnabled(false)
-                speak("Spatial audio disabled, voice enabled")
+                speak("Spatial audio disabled, voice enabled", isHighPriority = true)
             }
             command.contains("where is my") || command.contains("where did i put my") -> {
-                speak("Let me check my visual memory.")
+                speak("Let me check my visual memory.", isHighPriority = true)
                 visualMemoryManager.answerQuery(command)
             }
             command.contains("transit mode") || command.contains("find a door") -> {
                 microNavigationManager.currentMode = NavMode.TRANSIT
                 nvidiaPrompt = "I am looking for a door or an exit. Tell me exactly where it is using a 3x3 grid (e.g. 'door is center'). If you don't see one, say 'No doors in current view'."
                 isNvidiaRequested = true
-                speak("Scanning for doors and transit vehicles...")
+                speak("Scanning for doors and transit vehicles...", isHighPriority = true)
             }
             command.contains("find a seat") || command.contains("find a bed") -> {
                 microNavigationManager.currentMode = NavMode.SEAT
                 nvidiaPrompt = "Differentiate between any beds, chairs, couches, or doors in this view. Tell me their exact locations using a 3x3 grid (e.g. 'bed is bottom left', 'door is center')."
                 isNvidiaRequested = true
-                speak("Scanning room layout for seats, beds, and doors...")
+                speak("Scanning room layout for seats, beds, and doors...", isHighPriority = true)
             }
             command.contains("find a cup") || command.contains("find a bottle") -> {
                 microNavigationManager.currentMode = NavMode.CUP
@@ -242,19 +245,26 @@ class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener {
                     // Trigger cloud Vision AI for advanced object recognition
                     nvidiaPrompt = "I am looking for a $target. Do you see it in this image? If so, tell me exactly where it is using a 3x3 grid (e.g. 'top left', 'center', 'bottom right') and provide a brief description. If you don't see it, reply EXACTLY with 'Not found in current view'."
                     isNvidiaRequested = true
-                    speak("Scanning for $target...")
+                    speak("Scanning for $target...", isHighPriority = true)
                 }
             }
             command.contains("normal mode") -> {
                 microNavigationManager.currentMode = NavMode.NORMAL
             }
             else -> {
-                speak("Command not recognized. Please try again.")
+                speak("Command not recognized. Please try again.", isHighPriority = true)
             }
         }
     }
 
-    fun speak(text: String, pan: Float = 0f, volume: Float = 1.0f, pitch: Float = 1.0f) {
+    private var currentSpeechIsHighPriority = false
+
+    fun speak(text: String, pan: Float = 0f, volume: Float = 1.0f, pitch: Float = 1.0f, isHighPriority: Boolean = false) {
+        if (tts.isSpeaking && currentSpeechIsHighPriority && !isHighPriority) {
+            return // Don't allow background tracking to interrupt high-priority AI answers
+        }
+        
+        currentSpeechIsHighPriority = isHighPriority
         val params = Bundle()
         params.putFloat(TextToSpeech.Engine.KEY_PARAM_PAN, pan.coerceIn(-1.0f, 1.0f))
         params.putFloat(TextToSpeech.Engine.KEY_PARAM_VOLUME, volume.coerceIn(0.0f, 1.0f))

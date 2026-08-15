@@ -20,9 +20,12 @@ class AutoFlashlightManager(
     private var lowLightCount = 0
     private var brightLightCount = 0
     // Based on typical Y-plane luminance (0-255)
-    private val THRESHOLD_LOW = 40f 
-    private val THRESHOLD_BRIGHT = 100f
-    private val REQUIRED_CONSECUTIVE_READINGS = 3
+    private val THRESHOLD_LOW = 80f // Turn on sooner in darkness
+    private val THRESHOLD_BRIGHT = 200f // Only turn off when very bright
+    private val REQUIRED_CONSECUTIVE_READINGS_ON = 1 // Instantly turn on
+    private val REQUIRED_CONSECUTIVE_READINGS_OFF = 5 // Be sure before turning off
+    
+    var isManualOverride = false
 
     fun setCamera(camera: Camera?) {
         this.camera = camera
@@ -37,33 +40,39 @@ class AutoFlashlightManager(
     }
 
     fun processLuminance(averageLuminance: Float) {
-        if (camera == null || !camera!!.cameraInfo.hasFlashUnit()) return
+        if (camera == null || !camera!!.cameraInfo.hasFlashUnit() || isManualOverride) return
 
         if (averageLuminance < THRESHOLD_LOW && !isTorchOn) {
             lowLightCount++
             brightLightCount = 0
-            if (lowLightCount >= REQUIRED_CONSECUTIVE_READINGS) {
+            if (lowLightCount >= REQUIRED_CONSECUTIVE_READINGS_ON) {
                 setTorch(true)
-                onSpeak("Low light detected. Flashlight turned on.")
+                onSpeak("Low light detected. Flashlight auto-enabled.")
                 lowLightCount = 0
             }
         } else if (averageLuminance > THRESHOLD_BRIGHT && isTorchOn) {
             brightLightCount++
             lowLightCount = 0
-            if (brightLightCount >= REQUIRED_CONSECUTIVE_READINGS) {
+            if (brightLightCount >= REQUIRED_CONSECUTIVE_READINGS_OFF) {
                 setTorch(false)
                 brightLightCount = 0
             }
         } else {
-            // Reset counters if reading is in between thresholds or not moving towards a switch
+            // Reset counters if reading is in between thresholds
             lowLightCount = 0
             brightLightCount = 0
         }
     }
 
     fun toggleTorch(enable: Boolean) {
+        isManualOverride = true
         setTorch(enable)
-        if (enable) onSpeak("Flashlight manually turned on") else onSpeak("Flashlight manually turned off")
+        if (enable) onSpeak("Flashlight manually turned on. Auto mode paused.") else onSpeak("Flashlight manually turned off. Auto mode paused.")
+    }
+    
+    fun resetToAuto() {
+        isManualOverride = false
+        onSpeak("Auto flashlight resumed.")
     }
 
     private fun setTorch(enable: Boolean) {
