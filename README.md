@@ -17,11 +17,12 @@ A smart, voice-controlled Android app that helps visually impaired people naviga
 *   **📷 Instant Object Detection:** Uses the phone's camera to instantly spot obstacles and things in your path, without needing the internet.
 *   **🤖 Scene Description:** Ask "Describe what you see," and the app will tell you exactly what the room looks like.
 *   **📖 Read Text (OCR):** Point the camera at a sign or book, and it will read the text out loud.
+*   **😊 Facial Recognition:** Recognizes people you know when they are nearby and tells you their names.
 
 ### 🛡️ Safety First
 *   **🎙️ Voice Control:** Control everything using just your voice. No need to look at the screen.
 *   **🚨 Fall SOS:** If the phone detects you have fallen, it automatically sends an emergency SOS message to your contacts.
-*   **🔦 Auto-Flashlight:** Turns the flashlight on automatically in the dark so the camera can keep seeing clearly.
+*   **🔦 Manual & Auto-Flashlight:** You can turn the flashlight on and off yourself with a voice command, or let the app do it automatically in the dark so the camera can keep seeing clearly.
 
 ---
 
