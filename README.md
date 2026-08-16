@@ -19,11 +19,10 @@ A smart, voice-controlled Android app that helps visually impaired people naviga
 *   **📖 Read Text (OCR):** Point the camera at a sign or book, and it will read the text out loud.
 *   **😊 Facial Recognition:** Recognizes people you know when they are nearby and tells you their names.
 
-### 🛡️ Safety & Data
+### 🛡️ Safety First
 *   **🎙️ Voice Control:** Control everything using just your voice. No need to look at the screen.
-*   **🚨 Fall SOS with Google Maps:** If the phone detects you have fallen, it automatically grabs your GPS location and sends an emergency SOS message with a Google Maps link to your contacts via Telegram.
+*   **🚨 Fall SOS:** If the phone detects you have fallen, it automatically sends an emergency SOS message to your contacts.
 *   **🔦 Manual & Auto-Flashlight:** You can turn the flashlight on and off yourself with a voice command, or let the app do it automatically in the dark so the camera can keep seeing clearly.
-*   **📊 Metadata Export:** Say "Export metadata" and the app will generate a CSV file containing all the spatial data it has collected, allowing you to save it directly to your device.
 
 ---
 
@@ -123,6 +122,5 @@ graph TD
 *   🗣️ *"Find a chair"*
 *   🗣️ *"Where is my cup?"*
 *   🗣️ *"Read"*
-*   🗣️ *"Turn off flashlight"* / *"Automatic flashlight"*
+*   🗣️ *"Turn off flashlight"*
 *   🗣️ *"Switch to spatial"* (for 3D sound)
-*   🗣️ *"Export metadata"* (saves spatial memory to CSV)
