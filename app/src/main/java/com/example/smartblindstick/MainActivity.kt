@@ -66,7 +66,9 @@ class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener {
     private val REQUIRED_PERMISSIONS = arrayOf(
         Manifest.permission.CAMERA,
         Manifest.permission.RECORD_AUDIO,
-        Manifest.permission.VIBRATE
+        Manifest.permission.VIBRATE,
+        Manifest.permission.ACCESS_FINE_LOCATION,
+        Manifest.permission.ACCESS_COARSE_LOCATION
     )
 
     private val requestPermissionLauncher = registerForActivityResult(
@@ -80,6 +82,27 @@ class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener {
             fallDetectionManager.startListening()
         } else {
             Toast.makeText(this, "Permissions not granted by the user.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private var pendingCsvContent: String? = null
+    private val createDocumentLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == android.app.Activity.RESULT_OK) {
+            result.data?.data?.let { uri ->
+                pendingCsvContent?.let { content ->
+                    try {
+                        contentResolver.openOutputStream(uri)?.use { outputStream ->
+                            outputStream.write(content.toByteArray())
+                        }
+                        speak("Metadata downloaded successfully.", isHighPriority = true)
+                    } catch (e: Exception) {
+                        Log.e("MainActivity", "Error saving CSV", e)
+                        speak("Failed to save metadata.", isHighPriority = true)
+                    }
+                }
+            }
         }
     }
 
@@ -221,6 +244,18 @@ class MainActivity : ComponentActivity(), TextToSpeech.OnInitListener {
             command.contains("where is my") || command.contains("where did i put my") -> {
                 speak("Let me check my visual memory.", isHighPriority = true)
                 visualMemoryManager.answerQuery(command)
+            }
+            command.contains("export metadata") || command.contains("extract metadata") -> {
+                speak("Preparing metadata file. Please choose where to save it on your screen.", isHighPriority = true)
+                visualMemoryManager.exportMetadata { csvContent ->
+                    val intent = android.content.Intent(android.content.Intent.ACTION_CREATE_DOCUMENT).apply {
+                        addCategory(android.content.Intent.CATEGORY_OPENABLE)
+                        type = "text/csv"
+                        putExtra(android.content.Intent.EXTRA_TITLE, "SmartBlindStick_Metadata.csv")
+                    }
+                    pendingCsvContent = csvContent
+                    createDocumentLauncher.launch(intent)
+                }
             }
             command.contains("transit mode") || command.contains("find a door") -> {
                 microNavigationManager.currentMode = NavMode.TRANSIT

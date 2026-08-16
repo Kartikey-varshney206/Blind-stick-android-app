@@ -15,6 +15,10 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
+import android.location.LocationManager
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.core.content.ContextCompat
 import org.json.JSONObject
 
 class FallDetectionManager(private val context: Context) : SensorEventListener {
@@ -99,7 +103,26 @@ class FallDetectionManager(private val context: Context) : SensorEventListener {
         // Real credentials for user
         val botToken = "8654874065:AAGFOscZtCQUOokXO7QsvFbuBbWeb8ltdU4"
         val chatId = "7010211918"
-        val message = "Emergency! The Smart Blind Stick user may have fallen. Please check on them."
+        
+        var locationString = "Location unavailable."
+        try {
+            if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                
+                val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+                var lastLoc = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+                if (lastLoc == null) {
+                    lastLoc = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+                }
+                if (lastLoc != null) {
+                    locationString = "Location: https://www.google.com/maps/search/?api=1&query=${lastLoc.latitude},${lastLoc.longitude}"
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("FallDetection", "Error getting location", e)
+        }
+        
+        val message = "Emergency! The Smart Blind Stick user may have fallen. Please check on them.\n$locationString"
 
         if (botToken == "<YOUR_BOT_TOKEN>") {
             Log.w("FallDetection", "Telegram Bot Token not set. Cannot send alert.")

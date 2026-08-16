@@ -107,6 +107,7 @@ class VisionProcessor(private val context: Context) {
                     
                     val inputImage = InputImage.fromBitmap(bitmap, 0)
                     faceDetector.process(inputImage).addOnSuccessListener { faces ->
+                        var faceBitmap = bitmap
                         if (faces.isNotEmpty()) {
                             val face = faces[0]
                             val boundingBox = face.boundingBox
@@ -117,14 +118,17 @@ class VisionProcessor(private val context: Context) {
                             val height = minOf(bitmap.height - y, boundingBox.height())
                             
                             if (width > 0 && height > 0) {
-                                val faceBitmap = Bitmap.createBitmap(bitmap, x, y, width, height)
-                                val embedding = getFaceEmbedding(faceBitmap)
-                                if (embedding != null) {
-                                    val name = personNameOverride ?: fileName.substringBeforeLast(".")
-                                    knownFaces[name] = embedding
-                                    Log.d("VisionProcessor", "Registered known face: $name")
-                                }
+                                faceBitmap = Bitmap.createBitmap(bitmap, x, y, width, height)
                             }
+                        } else {
+                            Log.w("VisionProcessor", "ML Kit didn't find a face in ${fileName}, using whole image as fallback")
+                        }
+                        
+                        val embedding = getFaceEmbedding(faceBitmap)
+                        if (embedding != null) {
+                            val name = personNameOverride ?: fileName.substringBeforeLast(".")
+                            knownFaces[name] = embedding
+                            Log.d("VisionProcessor", "Registered known face: $name")
                         }
                     }
                 }
@@ -221,8 +225,8 @@ class VisionProcessor(private val context: Context) {
                                 }
                             }
                             
-                            // Threshold for face match (adjustable, MobileFaceNet usually ~ 0.5-0.7)
-                            if (minDistance > 0.7f) {
+                            // Threshold for face match (adjustable, MobileFaceNet usually ~ 0.5-0.7, relaxed to 0.85 for leniency)
+                            if (minDistance > 0.85f) {
                                 bestMatch = "Unknown person"
                             }
                             

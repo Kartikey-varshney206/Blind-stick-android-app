@@ -162,4 +162,46 @@ class VisualMemoryManager(private val context: Context, private val onAnswerRead
             }
         }
     }
+
+    fun exportMetadata(onCsvReady: ((String) -> Unit)? = null) {
+        scope.launch {
+            try {
+                val logs = dao.getAllLogs()
+                if (logs.isEmpty()) {
+                    withContext(Dispatchers.Main) {
+                        onAnswerReady("No metadata available to export.", 0f, 1.0f, 1.0f)
+                    }
+                    return@launch
+                }
+
+                val csvHeader = "ID,Timestamp,ObjectLabel,GlobalAzimuth,Confidence,SceneContext\n"
+                val csvContent = java.lang.StringBuilder(csvHeader)
+                logs.forEach {
+                    val safeContext = it.sceneContext.replace(",", ";")
+                    csvContent.append("${it.id},${it.timestamp},${it.objectLabel},${it.globalAzimuth},${it.confidence},$safeContext\n")
+                }
+
+                withContext(Dispatchers.Main) {
+                    if (onCsvReady != null) {
+                        onCsvReady(csvContent.toString())
+                    } else {
+                        // Fallback to direct save if no callback provided
+                        val downloadsDir = context.getExternalFilesDir(android.os.Environment.DIRECTORY_DOWNLOADS)
+                        if (downloadsDir != null) {
+                            val file = java.io.File(downloadsDir, "SmartBlindStick_Metadata.csv")
+                            file.writeText(csvContent.toString())
+                            onAnswerReady("Metadata successfully exported to the Downloads folder.", 0f, 1.0f, 1.0f)
+                        } else {
+                            onAnswerReady("Failed to access Downloads folder.", 0f, 1.0f, 1.0f)
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("VisualMemoryManager", "Error exporting metadata", e)
+                withContext(Dispatchers.Main) {
+                    onAnswerReady("Error exporting metadata.", 0f, 1.0f, 1.0f)
+                }
+            }
+        }
+    }
 }

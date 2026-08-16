@@ -15,6 +15,10 @@
     <!-- Vibrate permission for Haptic Feedback -->
     <uses-permission android:name="android.permission.VIBRATE" />
 
+    <!-- Location permissions for Fall Detection Google Maps link -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
     <application
         android:allowBackup="false"
         tools:replace="android:allowBackup"
