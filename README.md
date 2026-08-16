@@ -1,128 +1,89 @@
-# 👁️ Smart Blind Stick - Android App
+## 👥 Team
 
-![Status](https://img.shields.io/badge/Status-Active-brightgreen) ![Platform](https://img.shields.io/badge/Platform-Android-3DDC84?logo=android&logoColor=white) ![Powered by](https://img.shields.io/badge/Powered_by-AI-blue)
-
-A smart, voice-controlled Android app that helps visually impaired people navigate their surroundings safely. It acts as an intelligent assistant that can "see" objects, warn about obstacles, and guide the user.
-
----
-
-## 🌟 What It Can Do
-
-### 🧭 Easy Navigation
-*   **🎧 3D Sound Feedback:** The app plays sounds to let you know exactly where objects are around you (left, right, near, or far).
-*   **📍 Object Memory:** The app remembers where things are. If you walk past a cup, you can ask "Where is my cup?" and it will tell you.
-*   **🔍 Find Mode:** Ask the app to "Find a door" or "Find a chair," and it will guide you to it using sound and vibrations.
-
-### 🧠 Smart Vision
-*   **📷 Instant Object Detection:** Uses the phone's camera to instantly spot obstacles and things in your path, without needing the internet.
-*   **🤖 Scene Description:** Ask "Describe what you see," and the app will tell you exactly what the room looks like.
-*   **📖 Read Text (OCR):** Point the camera at a sign or book, and it will read the text out loud.
-*   **😊 Facial Recognition:** Recognizes people you know when they are nearby and tells you their names.
-
-### 🛡️ Safety & Data
-*   **🎙️ Voice Control:** Control everything using just your voice. No need to look at the screen.
-*   **🚨 Fall SOS with Google Maps:** If the phone detects you have fallen, it automatically grabs your GPS location and sends an emergency SOS message with a Google Maps link to your contacts via Telegram.
-*   **🔦 Manual & Auto-Flashlight:** You can turn the flashlight on and off yourself with a voice command, or let the app do it automatically in the dark so the camera can keep seeing clearly.
-*   **📊 Metadata Export:** Say "Export metadata" and the app will generate a CSV file containing all the spatial data it has collected, allowing you to save it directly to your device.
+| | |
+|---|---|
+| **Team Name** | Clover Dynamics |
+| **Team Member** | Kamakhya Anupam Sharma |
+| **City** | Bengaluru |
 
 ---
 
-## 🏗️ How It Works (Diagrams)
+## 🎯 App
 
-### 1. The Big Picture
+| | |
+|---|---|
+| **App name** | Smart Blind Stick Android App |
+| **Theme** | Utility app |
+| **One-liner** | It's an assistive technology app that helps visually impaired users sense their environment through the camera of their phones |
 
-```mermaid
-graph TD
-    A[Camera Feed] --> B(Vision Processor)
-    B --> C{Offline AI}
-    C -->|Fast Detection| D[3D Sound]
-    C -->|Guidance| E[Vibration & Navigation]
-    C -->|Remember Objects| F[(Memory Database)]
-    
-    A -->|Ask a Question| G{Cloud AI}
-    G -->|Detailed Answer| H[Voice Response]
-    
-    I[Phone Sensors] --> J[Fall Detection]
-    I --> F
+### What we built
+A comprehensive assistive Android application designed to give visually impaired users independence. The app uses offline on-device computer vision (YOLOv8) combined with a custom 3D spatial audio engine to give users a real-time "acoustic map" of their surroundings. It features a Voice Assistant that leverages powerful Cloud Vision AI to describe environments, read text (OCR), and provide micro-navigation (e.g., finding a door). Additionally, the app includes an automatic Fall Detection system that sends a Telegram SOS message with the user's GPS location, a persistent Spatial Memory database, and an offline Facial Recognition engine to identify friends.
+
+### How the AI is used
+- **Model:** `meta/llama-3.2-90b-vision-instruct` (via Nvidia NIM API)
+- **What the AI does:** Acts as the cognitive brain of the app. It takes an image of the user's surroundings along with a voice prompt (e.g., "Describe what you see" or "Find a door") and provides a detailed 3x3 grid spatial description to the user via Text-To-Speech.
+- **AI pattern:** Vision · Chat · Extract
+
+---
+
+## ▶️ How to run it
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/k-anupam-sharma/TechQuest.git
+cd TechQuest
+
+# 2. Open the project in Android Studio
+#    (let Gradle finish syncing before you Run)
 ```
 
-### 2. How 3D Sound Works
+**API Setup**
+- The Cloud Vision features require an API key. 
+- Open `app/src/main/java/com/example/smartblindstick/NvidiaApiClient.kt`
+- Replace the `apiKey` variable with your Nvidia NIM API key.
 
-```mermaid
-graph LR
-    A[See an Object] --> B(Get its Location)
-    B -->|Left/Right| C(Sound Direction)
-    B -->|Size| D(Sound Volume)
-    B -->|Up/Down| E(Sound Pitch)
-    C --> F((Your Earphones))
-    D --> F
-    E --> F
-```
-
-### 3. Remembering Objects
-
-```mermaid
-sequenceDiagram
-    participant Camera
-    participant AI
-    participant Compass
-    participant Database
-    participant User
-    
-    Camera->>AI: Sees a 'Cup'
-    Compass->>Database: Saves direction (e.g. East)
-    AI->>Database: Saves 'Cup' at East
-    Note over Camera,User: User turns around
-    User->>Camera: "Where is my cup?"
-    Camera->>Database: Look for 'Cup'
-    Database-->>Camera: It's at East
-    Compass-->>Camera: You are facing West
-    Camera->>User: "The cup is directly behind you."
-```
-
-### 4. Emergency Fall Detection
-
-```mermaid
-graph TD
-    A[Phone Moves Fast] --> B{Did it drop?}
-    B -- Yes --> C[Fall Detected!]
-    C --> D{Did it hit the ground?}
-    D -- Yes --> E[Start Emergency]
-    E --> F[Say: 'Fall Detected']
-    E --> G[Send SOS Message]
-    G --> H((Emergency Contacts))
-```
+**Build the APK**
+- Android Studio → `Build → Build Bundle(s)/APK(s) → Build APK(s)`
+- Output: `app/build/outputs/apk/debug/app-debug.apk`
 
 ---
 
-## 🛠️ Technology Used
+## 📱 Demo
 
-| Part | Tech |
-| :--- | :--- |
-| **Language** | Kotlin |
-| **UI** | Jetpack Compose |
-| **Offline AI** | TensorFlow Lite, Google ML Kit |
-| **Online AI** | Nvidia / Meta LLaMA |
-| **Database** | Room (SQLite) |
+- **APK:** Navigate to the `app/build/outputs/apk/debug/app-debug.apk` path after building to install the app on your device.
+- **Screen recording:** *(Add your video link here)*
+- **Screenshots:** *(Add your screenshots here)*
 
 ---
 
-## 🚀 How to Run It
-
-1. **Download** this code to your computer.
-2. Open it in **Android Studio**.
-3. Let it finish loading.
-4. Add your Nvidia API key in `NvidiaApiClient.kt`.
-5. **Run** it on a real Android phone (the camera and sensors won't work properly on an emulator).
+## 🧰 Tech stack
+- Android (Kotlin) · Android Studio
+- Nvidia NIM API (Meta LLaMA Vision)
+- TensorFlow Lite (YOLOv8 Object Detection, MobileFaceNet)
+- Google ML Kit (Face Detection & Text Recognition OCR)
+- Android CameraX & SensorManager
+- Room Database (SQLite)
+- OkHttp (Networking & Telegram API)
 
 ---
 
-## 📝 Voice Commands to Try
+## ✅ Submission checklist
+- [x] This README is filled in (team, theme, how to run)
+- [x] The API key is **NOT** in the repo (see `.gitignore` below)
+- [x] Final code pushed to **your fork**
+- [ ] APK and/or a screen recording added or linked
+- [ ] **Pull Request opened** from your fork → `Reskilll/TechQuest` **before the deadline**
+- [x] PR title = your **team name**
 
-*   🗣️ *"Describe what you see"*
-*   🗣️ *"Find a chair"*
-*   🗣️ *"Where is my cup?"*
-*   🗣️ *"Read"*
-*   🗣️ *"Turn off flashlight"* / *"Automatic flashlight"*
-*   🗣️ *"Switch to spatial"* (for 3D sound)
-*   🗣️ *"Export metadata"* (saves spatial memory to CSV)
+---
+
+<!-- 🔒 Keep your key out of the repo. Add these lines to a .gitignore file:
+
+local.properties
+*.apk
+.env
+*.keystore
+
+-->
+
+<sub>Built at **TechQuest · AI Tech Workshop** — iQOO Connect × Reskilll.</sub>
