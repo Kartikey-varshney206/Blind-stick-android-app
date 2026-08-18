@@ -12,7 +12,7 @@
 
 | | |
 |---|---|
-| **App name** | Smart Blind Stick Android App |
+| **App name** | VSense — An Assistive App for the Visually Impaired |
 | **Theme** | Utility app |
 | **One-liner** | It's an assistive technology app that helps visually impaired users sense their environment through the camera of their phones |
 
