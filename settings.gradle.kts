@@ -22,6 +22,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "smart blind stick"
+rootProject.name = "VSense"
 include(":app")
  
