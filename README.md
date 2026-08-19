@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Team Name** | Clover Dynamics |
-| **Team Member** | Kamakhya Anupam Sharma |
+| **Team Member** | Kartikey Varshney, Kamakhya Anupam Sharma|
 | **City** | Bengaluru |
 
 ---
