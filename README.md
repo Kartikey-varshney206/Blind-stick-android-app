@@ -67,6 +67,17 @@ cd TechQuest
 
 ---
 
+## 🗣️ Voice Commands to Try
+
+*   🗣️ *"Describe what you see"*
+*   🗣️ *"Find a chair"*
+*   🗣️ *"Where is my cup?"*
+*   🗣️ *"Read"*
+*   🗣️ *"Turn off flashlight"*
+*   🗣️ *"Switch to spatial"* (for 3D sound)
+
+---
+
 ## ✅ Submission checklist
 - [x] This README is filled in (team, theme, how to run)
 - [x] The API key is **NOT** in the repo (see `.gitignore` below)
