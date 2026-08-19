@@ -69,9 +69,9 @@ cd TechQuest
 
 ## 🗣️ Voice Commands to Try
 
-*   🗣️ *"Describe <speak anything>"*
+*   🗣️ *"Describe (speak anything)"*
 *   🗣️ *"Find a chair/seat/door"*
-*   🗣️ *"Where is my <object>?"*
+*   🗣️ *"Where is my (any object)?"*
 *   🗣️ *"Read"*
 *   🗣️ *"Torch on/ Torch off"*
 *   🗣️ *"Switch to spatial/Switch to Voice"* (for 3D sound and normal mode respectively)
