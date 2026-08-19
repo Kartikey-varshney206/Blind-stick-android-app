@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Team Name** | Clover Dynamics |
-| **Team Member** | Kartikey Varshney, Kamakhya Anupam Sharma|
+| **Team Members** | Kartikey Varshney, Kamakhya Anupam Sharma |
 | **City** | Bengaluru |
 
 ---
@@ -13,7 +13,7 @@
 | | |
 |---|---|
 | **App name** | VSense — An Assistive App for the Visually Impaired |
-| **Theme** | Utility app |
+| **Theme** | Utility and Accessibility app |
 | **One-liner** | It's an assistive technology app that helps visually impaired users sense their environment through the camera of their phones |
 
 ### What we built
@@ -69,12 +69,12 @@ cd TechQuest
 
 ## 🗣️ Voice Commands to Try
 
-*   🗣️ *"Describe what you see"*
-*   🗣️ *"Find a chair"*
-*   🗣️ *"Where is my cup?"*
+*   🗣️ *"Describe <speak anything>"*
+*   🗣️ *"Find a chair/seat/door"*
+*   🗣️ *"Where is my <object>?"*
 *   🗣️ *"Read"*
-*   🗣️ *"Turn off flashlight"*
-*   🗣️ *"Switch to spatial"* (for 3D sound)
+*   🗣️ *"Torch on/ Torch off"*
+*   🗣️ *"Switch to spatial/Switch to Voice"* (for 3D sound and normal mode respectively)
 
 ---
 
